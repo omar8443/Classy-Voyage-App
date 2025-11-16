@@ -1,0 +1,57 @@
+{
+  "name": "classy-voyage",
+  "version": "1.0.0",
+  "description": "AI-powered flight booking and lead management system",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omar8443/Classy-Voyage-.git"
+  },
+  "keywords": [
+    "flight",
+    "booking",
+    "ai",
+    "travel"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/omar8443/Classy-Voyage-/issues"
+  },
+  "homepage": "https://github.com/omar8443/Classy-Voyage-#readme",
+  "dependencies": {
+    "@genkit-ai/ai": "^1.23.0",
+    "@genkit-ai/core": "^1.23.0",
+    "@genkit-ai/googleai": "^1.23.0",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-toast": "^1.2.15",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "expo": "^54.0.23",
+    "lucide-react": "^0.553.0",
+    "next": "^16.0.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.9.3",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17"
+  }
+}
