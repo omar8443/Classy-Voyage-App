@@ -84,10 +84,22 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching leads from Firestore:', error)
     
+    // Check if it's a Firebase initialization error
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    if (errorMessage.includes('FIREBASE_SERVICE_ACCOUNT_KEY')) {
+      return NextResponse.json(
+        {
+          error: 'Firebase not configured',
+          message: 'Please set FIREBASE_SERVICE_ACCOUNT_KEY environment variable in your deployment settings.',
+        },
+        { status: 503 } // Service Unavailable
+      )
+    }
+    
     return NextResponse.json(
       {
         error: 'Failed to fetch leads',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: errorMessage,
       },
       { status: 500 }
     )

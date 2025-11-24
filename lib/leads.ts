@@ -60,9 +60,16 @@ export async function saveElevenLabsCallLead(
     console.log('Successfully saved lead to Firestore')
   } catch (error) {
     console.error('Error saving lead to Firestore:', error)
-    throw new Error(
-      `Failed to save lead to Firestore: ${error instanceof Error ? error.message : 'Unknown error'}`
-    )
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    
+    // Provide helpful error message if Firebase is not configured
+    if (errorMessage.includes('FIREBASE_SERVICE_ACCOUNT_KEY')) {
+      throw new Error(
+        'Firebase is not configured. Please set FIREBASE_SERVICE_ACCOUNT_KEY environment variable in your deployment settings.'
+      )
+    }
+    
+    throw new Error(`Failed to save lead to Firestore: ${errorMessage}`)
   }
 }
 
