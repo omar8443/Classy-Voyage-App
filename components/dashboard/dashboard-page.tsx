@@ -19,6 +19,7 @@ export function DashboardPage({ initialLeads }: DashboardPageProps) {
   const filteredLeads = leads.filter(lead =>
     lead.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lead.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lead.flightInquiry.origin.toLowerCase().includes(searchQuery.toLowerCase()) ||
     lead.flightInquiry.destination.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -29,13 +30,13 @@ export function DashboardPage({ initialLeads }: DashboardPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-[#0d0d0f]">
       <DashboardHeader onSearchChange={setSearchQuery} />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-10">
         <StatsCards leads={leads} />
 
-        <div className="mt-8">
+        <div className="mt-10">
           <LeadTable
             leads={filteredLeads}
             onSelectLead={setSelectedLead}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ai } from '@/ai/genkit'
+import { openai } from '@/ai/genkit'
 import { z } from 'zod'
 
 const chatInputSchema = z.object({
@@ -11,14 +11,10 @@ const chatInputSchema = z.object({
   })),
 })
 
-const chatFlow = ai.defineFlow(
-  {
-    name: 'flightBookingChatAgent',
-    inputSchema: chatInputSchema,
-    outputSchema: z.string(),
-  },
-  async (input) => {
-    const { message, history } = input
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { message, leadId, history } = chatInputSchema.parse(body)
 
     const systemPrompt = `You are an expert AI assistant for Classy Voyage, a premium flight booking agency.
 
@@ -39,33 +35,21 @@ Key points:
 Current conversation context is provided in the message history.`
 
     const messages = [
-      { role: 'user' as const, content: [{ text: systemPrompt }] },
+      { role: 'system', content: systemPrompt },
       ...history.map(h => ({
-        role: h.role,
-        content: [{ text: h.content }]
+        role: h.role === 'user' ? 'user' : 'assistant',
+        content: h.content
       })),
-      { role: 'user' as const, content: [{ text: message }] }
+      { role: 'user', content: message }
     ]
 
-    const result = await ai.generate({
-      model: 'googleai/gemini-2.5-flash',
-      prompt: { messages },
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: messages as any,
+      temperature: 0.7,
     })
 
-    return result.text
-  }
-)
-
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { message, leadId, history } = chatInputSchema.parse(body)
-
-    const response = await chatFlow({
-      message,
-      leadId,
-      history,
-    })
+    const response = completion.choices[0]?.message?.content || 'I apologize, but I could not generate a response.'
 
     return NextResponse.json({ message: response })
   } catch (error) {

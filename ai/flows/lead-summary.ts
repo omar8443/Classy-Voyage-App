@@ -1,4 +1,4 @@
-import { ai } from '../genkit'
+import { openai } from '../genkit'
 import { z } from 'zod'
 
 const LeadSummaryInputSchema = z.object({
@@ -23,24 +23,14 @@ const LeadSummaryInputSchema = z.object({
   }),
 })
 
-const summarizePrompt = ai.definePrompt({
-  name: 'summarizeLeadInteraction',
-  input: { schema: LeadSummaryInputSchema },
-  output: { format: 'text' },
-}, async (input) => {
+export async function summarizeLeadInteraction(input: z.infer<typeof LeadSummaryInputSchema>): Promise<string> {
   const { leadName, interactionType, messages, flightInquiry } = input
 
   const conversationText = messages
     .map(m => `${m.role}: ${m.content}`)
     .join('\n')
 
-  return {
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            text: `You are an AI assistant for Classy Voyage, a premium flight booking agency.
+  const prompt = `You are an AI assistant for Classy Voyage, a premium flight booking agency.
 
 Analyze the following ${interactionType} interaction with ${leadName} and provide a concise summary focusing on:
 - Customer intent and requirements
@@ -59,25 +49,15 @@ Conversation:
 ${conversationText}
 
 Provide a professional summary in 2-3 sentences.`
-          }
-        ]
-      }
-    ]
-  }
-})
 
-const leadSummaryFlow = ai.defineFlow(
-  {
-    name: 'leadSummaryFlow',
-    inputSchema: LeadSummaryInputSchema,
-    outputSchema: z.string(),
-  },
-  async (input) => {
-    const result = await summarizePrompt(input)
-    return result.text
-  }
-)
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: 'You are an AI assistant that provides concise, professional summaries of customer interactions for a flight booking agency.' },
+      { role: 'user', content: prompt }
+    ],
+    temperature: 0.7,
+  })
 
-export async function summarizeLeadInteraction(input: z.infer<typeof LeadSummaryInputSchema>): Promise<string> {
-  return await leadSummaryFlow(input)
+  return completion.choices[0]?.message?.content || 'Unable to generate summary.'
 }

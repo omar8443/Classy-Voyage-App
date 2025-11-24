@@ -1,7 +1,6 @@
-import { genkit } from '@genkit-ai/core'
-import { googleAI } from '@genkit-ai/googleai'
+import OpenAI from 'openai'
 
-export const ai = genkit({
-  plugins: [googleAI()],
-  model: 'googleai/gemini-2.5-flash',
+// Initialize OpenAI client
+export const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 })
